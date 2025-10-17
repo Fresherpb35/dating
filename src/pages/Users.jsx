@@ -111,71 +111,20 @@ export default function Users() {
   <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6 mb-6">
     <h2 className="text-lg font-bold mb-4 text-gray-800">➕ Add New User</h2>
     <form onSubmit={handleAddUser} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">Username *</label>
-        <input
-          type="text"
-          placeholder="Enter username"
-          value={newUser.username}
-          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">Email *</label>
-        <input
-          type="email"
-          placeholder="Enter email"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">Age</label>
-        <input
-          type="number"
-          placeholder="Enter age"
-          value={newUser.age}
-          onChange={(e) => setNewUser({ ...newUser, age: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">City</label>
-        <input
-          type="text"
-          placeholder="Enter city"
-          value={newUser.city}
-          onChange={(e) => setNewUser({ ...newUser, city: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">Country</label>
-        <input
-          type="text"
-          placeholder="Enter country"
-          value={newUser.country}
-          onChange={(e) => setNewUser({ ...newUser, country: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="mb-1 text-gray-700 font-medium">Phone</label>
-        <input
-          type="text"
-          placeholder="Enter phone number"
-          value={newUser.number}
-          onChange={(e) => setNewUser({ ...newUser, number: e.target.value })}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-        />
-      </div>
+      {["username", "email", "age", "city", "country", "number"].map((field) => (
+        <div key={field} className="flex flex-col">
+          <label className="mb-1 text-gray-700 font-medium capitalize">
+            {field === "number" ? "Phone" : field} {field === "username" || field === "email" ? "*" : ""}
+          </label>
+          <input
+            type={field === "email" ? "email" : field === "age" ? "number" : "text"}
+            placeholder={`Enter ${field === "number" ? "phone number" : field}`}
+            value={newUser[field]}
+            onChange={(e) => setNewUser({ ...newUser, [field]: e.target.value })}
+            className="border p-2 rounded-md focus:ring-2 focus:ring-pink-400 text-gray-800 placeholder-gray-400"
+          />
+        </div>
+      ))}
 
       <div className="col-span-full flex justify-end mt-2">
         <button
@@ -189,6 +138,7 @@ export default function Users() {
     </form>
   </div>
 )}
+
 
       {/* User Table */}
       <div className="flex-1 w-full px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
