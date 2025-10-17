@@ -161,7 +161,7 @@ export default function Users() {
               {users.length > 0 ? (
                 users.map((user, i) => (
                   <tr key={user.id} className="border-b hover:bg-gray-100 transition">
-                    <td className="p-2 sm:p-3">{i + 1}</td>
+                   <td className="p-2 sm:p-3 text-gray-800 font-semibold text-sm sm:text-base">{i + 1}</td>
                     <td className="p-2 sm:p-3 font-medium text-gray-800">{user.username || "N/A"}</td>
                     <td className="p-2 sm:p-3 text-gray-700 truncate max-w-[150px]">{user.email || "N/A"}</td>
                     <td className="p-2 sm:p-3 text-gray-700">{user.age ?? "N/A"}</td>
@@ -200,3 +200,4 @@ export default function Users() {
     </div>
   );
 }
+
