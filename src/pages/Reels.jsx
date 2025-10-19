@@ -8,6 +8,7 @@ const Comments = () => {
   const [deleting, setDeleting] = useState(null);
   const [editing, setEditing] = useState(null);
   const [editText, setEditText] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchComments();
@@ -15,6 +16,7 @@ const Comments = () => {
 
   const fetchComments = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from("comments")
         .select("id, created_at, user_id, reel_id, comment_text")
@@ -25,13 +27,14 @@ const Comments = () => {
       setComments(data || []);
     } catch (err) {
       console.error("❌ Error fetching comments:", err.message);
+      alert("Failed to fetch comments: " + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = confirm("Are you sure you want to delete this comment?");
+    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
     if (!confirmDelete) return;
 
     setDeleting(id);
@@ -61,6 +64,7 @@ const Comments = () => {
   const cancelEdit = () => {
     setEditing(null);
     setEditText("");
+    setIsEditing(false);
   };
 
   const handleEdit = async (id) => {
@@ -69,6 +73,7 @@ const Comments = () => {
       return;
     }
 
+    setIsEditing(true);
     try {
       const { data, error } = await supabase
         .from("comments")
@@ -86,6 +91,8 @@ const Comments = () => {
     } catch (err) {
       console.error("❌ Error updating comment:", err.message);
       alert("Failed to update comment: " + err.message);
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -141,7 +148,6 @@ const Comments = () => {
                           Reel: {c.reel_id.slice(0, 8)}...
                         </span>
                       </div>
-                      
                       {editing === c.id ? (
                         <div className="space-y-2 mb-2">
                           <textarea
@@ -149,17 +155,20 @@ const Comments = () => {
                             onChange={(e) => setEditText(e.target.value)}
                             className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none resize-none"
                             rows="3"
+                            disabled={isEditing}
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(c.id)}
-                              className="flex-1 bg-pink-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-pink-700 transition-colors"
+                              className="flex-1 bg-pink-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-pink-700 transition-colors disabled:opacity-50"
+                              disabled={isEditing}
                             >
-                              ✓ Save
+                              {isEditing ? "Saving..." : "✓ Save"}
                             </button>
                             <button
                               onClick={cancelEdit}
-                              className="flex-1 bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-gray-400 transition-colors"
+                              className="flex-1 bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-gray-400 transition-colors disabled:opacity-50"
+                              disabled={isEditing}
                             >
                               ✕ Cancel
                             </button>
@@ -170,19 +179,17 @@ const Comments = () => {
                           {c.comment_text}
                         </p>
                       )}
-                      
                       <div className="flex items-center justify-between">
                         <p className="text-xs text-gray-500 flex items-center gap-1">
                           <span>🕐</span>
-                          {new Date(c.created_at).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
+                          {new Date(c.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
                             year: 'numeric',
                             hour: '2-digit',
-                            minute: '2-digit'
+                            minute: '2-digit',
                           })}
                         </p>
-                        
                         {editing !== c.id && (
                           <div className="flex gap-2">
                             <button
@@ -250,17 +257,20 @@ const Comments = () => {
                                 onChange={(e) => setEditText(e.target.value)}
                                 className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none resize-none"
                                 rows="2"
+                                disabled={isEditing}
                               />
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleEdit(c.id)}
-                                  className="bg-pink-600 text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-pink-700 transition-colors"
+                                  className="bg-pink-600 text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-pink-700 transition-colors disabled:opacity-50"
+                                  disabled={isEditing}
                                 >
-                                  ✓ Save
+                                  {isEditing ? "Saving..." : "✓ Save"}
                                 </button>
                                 <button
                                   onClick={cancelEdit}
-                                  className="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-gray-400 transition-colors"
+                                  className="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-gray-400 transition-colors disabled:opacity-50"
+                                  disabled={isEditing}
                                 >
                                   ✕ Cancel
                                 </button>
@@ -273,12 +283,12 @@ const Comments = () => {
                           )}
                         </td>
                         <td className="p-4 text-gray-600 whitespace-nowrap">
-                          {new Date(c.created_at).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
+                          {new Date(c.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
                             year: 'numeric',
                             hour: '2-digit',
-                            minute: '2-digit'
+                            minute: '2-digit',
                           })}
                         </td>
                         <td className="p-4">
